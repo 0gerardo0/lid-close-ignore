@@ -38,7 +38,6 @@ cambiar_configuracion() {
         sudo sed -i "s/^IgnoreLid=.*/IgnoreLid=false/" "$UPOWER_CONF" || echo "IgnoreLid=false" | sudo tee -a "$UPOWER_CONF" >/dev/null
     fi
 
-    sudo systemctl restart systemd-logind
     sudo systemctl restart upower
 
     echo "Configuración aplicada correctamente."
