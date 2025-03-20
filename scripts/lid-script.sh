@@ -22,15 +22,28 @@ detectar_estado() {
 cambiar_configuracion() {
     local nuevo_estado=$1
 
-    echo "⚙️ Cambiando configuración a '$nuevo_estado'..."
+    echo "Cambiando configuración a '$nuevo_estado'..."
 
     if ! sudo -v; then
         echo "No tienes permisos de sudo o la contraseña es incorrecta."
         exit 1
     fi
 
-    sudo sed -i "s/^HandleLidSwitch=.*/HandleLidSwitch=$nuevo_estado/" "$LOGIND_CONF" || echo "HandleLidSwitch=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
-    sudo sed -i "s/^HandleLidSwitchDocked=.*/HandleLidSwitchDocked=$nuevo_estado/" "$LOGIND_CONF" || echo "HandleLidSwitchDocked=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
+    if grep -q "^#HandleLidSwitch=" "$LOGIND_CONF"; then
+        sudo sed -i "s/^#HandleLidSwitch=.*/HandleLidSwitch=$nuevo_estado/" "$LOGIND_CONF"
+    elif grep -q "^HandleLidSwitch=" "$LOGIND_CONF"; then
+        sudo sed -i "s/^HandleLidSwitch=.*/HandleLidSwitch=$nuevo_estado/" "$LOGIND_CONF"
+    else
+        echo "HandleLidSwitch=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
+    fi
+
+    if grep -q "^#HandleLidSwitchDocked=" "$LOGIND_CONF"; then
+        sudo sed -i "s/^#HandleLidSwitchDocked=.*/HandleLidSwitchDocked=$nuevo_estado/" "$LOGIND_CONF"
+    elif grep -q "^HandleLidSwitchDocked=" "$LOGIND_CONF"; then
+        sudo sed -i "s/^HandleLidSwitchDocked=.*/HandleLidSwitchDocked=$nuevo_estado/" "$LOGIND_CONF"
+    else
+        echo "HandleLidSwitchDocked=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
+    fi
 
     if [[ "$nuevo_estado" == "ignore" ]]; then
         sudo sed -i "s/^IgnoreLid=.*/IgnoreLid=true/" "$UPOWER_CONF" || echo "IgnoreLid=true" | sudo tee -a "$UPOWER_CONF" >/dev/null
