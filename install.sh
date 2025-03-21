@@ -7,6 +7,6 @@ fi
 
 sudo -v || { echo "No se obtuvo acceso root."; exit 1; }
 
-sudo install -m 755 lid-script.sh /usr/local/bin/lid-script
-echo "✅ Instalación completa. Usa 'lid' para gestionar la tapa."
+sudo install -m 755 scripts/lid-script.sh /usr/local/bin/lid-script
+echo "✅ Instalación completa. Usa 'lid-script' para gestionar la tapa."
 
