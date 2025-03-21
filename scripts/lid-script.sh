@@ -58,7 +58,7 @@ cambiar_configuracion() {
 
 mostrar_ayuda() {
     echo -e "\n╭────────────────────────────────────────────────────────────────╮"
-    echo -e "│                       Uso: lid-script [opción]                  │"
+    echo -e "│                       Uso: lid-script [opción]                 │"
     echo -e "╰────────────────────────────────────────────────────────────────╯\n"
     
     echo -e "Opciones disponibles:\n"
@@ -80,7 +80,7 @@ mostrar_ayuda() {
 menu_interactivo() {
     detectar_estado
     echo -e "\n\033[1;34m╭──────────────────────────────────────╮\033[0m"
-    echo -e " \033[1;34m│         Configuración de tapa         │\033[0m"
+    echo -e "\033[1;34m│        Configuración de tapa         │\033[0m"
     echo -e "\033[1;34m╰──────────────────────────────────────╯\033[0m"
 
     echo -e "\033[1;32m 1) Ignorar tapa (no suspender)\033[0m"
