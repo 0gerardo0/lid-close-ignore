@@ -56,7 +56,29 @@ cambiar_configuracion() {
     echo "Configuración aplicada correctamente."
 }
 
+mostrar_ayuda() {
+    echo -e "\n╭────────────────────────────────────────────────────────────────╮"
+    echo -e "│                       Uso: lid-script [opción]                  │"
+    echo -e "╰────────────────────────────────────────────────────────────────╯\n"
+    
+    echo -e "Opciones disponibles:\n"
+    echo -e "  -s, --set <modo>   Cambiar el modo de gestión de la tapa"
+    echo -e "  -h, --help         Mostrar esta ayuda\n"
+    
+    echo -e "Modos disponibles:\n"
+    echo -e "  ignore     → No suspender al cerrar la tapa"
+    echo -e "  suspend    → Suspender al cerrar la tapa"
+    echo -e "  hibernate  → Hibernar al cerrar la tapa"
+    echo -e "  poweroff   → Apagar al cerrar la tapa\n"
+
+    echo -e "╭────────────────────────────────────────────────────────────────╮"
+    echo -e "│                Ejemplo de uso: lid-script -s suspend           │"
+    echo -e "╰────────────────────────────────────────────────────────────────╯\n"
+    exit 1
+}
+
 menu_interactivo() {
+    detectar_estado
     echo "Selecciona una opción:"
     echo "1) Ignorar tapa (no suspender)"
     echo "2) Suspender al cerrar tapa"
@@ -75,11 +97,26 @@ menu_interactivo() {
         *) echo "Opción inválida." ;;
     esac
 }
-
-if [[ -z $1 ]]; then
-    detectar_estado
+if [[ $# -eq 0 ]]; then
     menu_interactivo
-else
-    cambiar_configuracion "$1"
+    exit 0
 fi
 
+case "$1" in
+    -s|--set)
+        if [[ -z "$2" || ! "$2" =~ ^(ignore|suspend|hibernate|poweroff)$ ]]; then
+            echo "Error: Debes especificar un modo válido. Usa --help para más información."
+            mostrar_ayuda
+            exit 1
+        fi
+        cambiar_configuracion "$2"
+        ;;
+    -h|--help)
+        mostrar_ayuda
+        ;;
+    *)
+        echo "Error: Opción desconocida '$1'. Usa --help para más información."
+        mostrar_ayuda
+        exit 1
+        ;;
+esac
