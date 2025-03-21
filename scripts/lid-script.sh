@@ -79,24 +79,29 @@ mostrar_ayuda() {
 
 menu_interactivo() {
     detectar_estado
-    echo "Selecciona una opción:"
-    echo "1) Ignorar tapa (no suspender)"
-    echo "2) Suspender al cerrar tapa"
-    echo "3) Hibernar al cerrar tapa"
-    echo "4) Apagar al cerrar tapa"
-    echo "5) Salir"
-    
-    read -rp "Ingrese una opción: " opcion
-    
+    echo -e "\n\033[1;34m╭──────────────────────────────────────╮\033[0m"
+    echo -e " \033[1;34m│         Configuración de tapa         │\033[0m"
+    echo -e "\033[1;34m╰──────────────────────────────────────╯\033[0m"
+
+    echo -e "\033[1;32m 1) Ignorar tapa (no suspender)\033[0m"
+    echo -e "\033[1;32m 2) Suspender al cerrar tapa\033[0m"
+    echo -e "\033[1;32m 3) Hibernar al cerrar tapa\033[0m"
+    echo -e "\033[1;32m 4) Apagar al cerrar tapa\033[0m"
+    echo -e "\033[1;31m 5) Salir\033[0m"
+
+    echo -e "\n\033[1;33mSeleccione una opción:\033[0m"
+    read -rp ">> " opcion
+
     case $opcion in
         1) cambiar_configuracion "ignore" ;;
         2) cambiar_configuracion "suspend" ;;
         3) cambiar_configuracion "hibernate" ;;
         4) cambiar_configuracion "poweroff" ;;
         5) exit 0 ;;
-        *) echo "Opción inválida." ;;
+        *) echo -e "\033[1;31mOpción inválida.\033[0m" ;;
     esac
 }
+
 if [[ $# -eq 0 ]]; then
     menu_interactivo
     exit 0
