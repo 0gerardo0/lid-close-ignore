@@ -22,21 +22,33 @@ fi
 sudo -v || { echo "No se obtuvo acceso root."; exit 1; }
 
 
-if [[ "$1" == "--uninstall" ]]; then
-    echo "Desinstalando lid-script..."
-    sudo rm -f "$BIN_PATH" && echo "Eliminado lid-script"
+case "$1" in
+    --uninstall)
+        echo "Desinstalando lid-script..."
+        sudo rm -f "$BIN_PATH" && echo "Eliminado lid-script"
 
-    read -rp "¿Deseas restaurar las configuraciones originales? (y/N): " option
-    if [[ "$option" =~ ^[Yy]$ ]]; then
-        restaurar_conf
-    fi
+        read -rp "¿Deseas restaurar las configuraciones originales? (y/N): " option
+        if [[ "$option" =~ ^[Yy]$ ]]; then
+            restaurar_conf
+        fi
+        
+        echo "Desinstalación completa."
+        exit 0
+        ;;
     
-    exit 0
-fi
+    -h|--help)
+        echo -e "Uso: ./install.sh [opción]\n"
+        echo "Opciones:"
+        echo "  --help        Muestra esta ayuda."
+        echo "  --uninstall   Desinstala lid-script y restaura configuraciones opcionales."
+        exit 0
+        ;;
+esac
 
 [[ -f "$LOGIND_CONF" && ! -f "$BACKUP_LOGIND" ]] && sudo cp "$LOGIND_CONF" "$BACKUP_LOGIND"
 [[ -f "$UPOWER_CONF" && ! -f "$BACKUP_UPOWER" ]] && sudo cp "$UPOWER_CONF" "$BACKUP_UPOWER"
 
 sudo install -m 755 scripts/lid-script.sh "$BIN_PATH"
 echo "Instalación completa. Usa 'lid-script' o 'lid-script --set <option> para usar."
+echo "Vease ./install --help"
 
