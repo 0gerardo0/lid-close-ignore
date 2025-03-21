@@ -19,6 +19,20 @@ detectar_estado() {
     echo " - IgnoreLid: ${IGNORE_LID:-DEFAULT}"
 }
 
+modificar_conf() {
+    local clave=$1
+    local valor=$2
+    local archivo=$3
+
+    if grep -q "^#$clave=" "$archivo"; then
+        sudo sed -i "s/^#$clave=.*/$clave=$valor/" "$archivo"
+    elif grep -q "^$clave=" "$archivo"; then
+        sudo sed -i "s/^$clave=.*/$clave=$valor/" "$archivo"
+    else
+        echo "$clave=$valor" | sudo tee -a "$archivo" >/dev/null
+    fi
+}
+
 cambiar_configuracion() {
     local nuevo_estado=$1
 
@@ -29,30 +43,16 @@ cambiar_configuracion() {
         exit 1
     fi
 
-    if grep -q "^#HandleLidSwitch=" "$LOGIND_CONF"; then
-        sudo sed -i "s/^#HandleLidSwitch=.*/HandleLidSwitch=$nuevo_estado/" "$LOGIND_CONF"
-    elif grep -q "^HandleLidSwitch=" "$LOGIND_CONF"; then
-        sudo sed -i "s/^HandleLidSwitch=.*/HandleLidSwitch=$nuevo_estado/" "$LOGIND_CONF"
-    else
-        echo "HandleLidSwitch=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
-    fi
-
-    if grep -q "^#HandleLidSwitchDocked=" "$LOGIND_CONF"; then
-        sudo sed -i "s/^#HandleLidSwitchDocked=.*/HandleLidSwitchDocked=$nuevo_estado/" "$LOGIND_CONF"
-    elif grep -q "^HandleLidSwitchDocked=" "$LOGIND_CONF"; then
-        sudo sed -i "s/^HandleLidSwitchDocked=.*/HandleLidSwitchDocked=$nuevo_estado/" "$LOGIND_CONF"
-    else
-        echo "HandleLidSwitchDocked=$nuevo_estado" | sudo tee -a "$LOGIND_CONF" >/dev/null
-    fi
-
+    modificar_conf "HandleLidSwitch" "$nuevo_estado" "$LOGIND_CONF"
+    modificar_conf "HandleLidSwitchDocked" "$nuevo_estado" "$LOGIND_CONF"
+    
     if [[ "$nuevo_estado" == "ignore" ]]; then
-        sudo sed -i "s/^IgnoreLid=.*/IgnoreLid=true/" "$UPOWER_CONF" || echo "IgnoreLid=true" | sudo tee -a "$UPOWER_CONF" >/dev/null
+        modificar_conf "IgnoreLid" "true" "$UPOWER_CONF"
     else
-        sudo sed -i "s/^IgnoreLid=.*/IgnoreLid=false/" "$UPOWER_CONF" || echo "IgnoreLid=false" | sudo tee -a "$UPOWER_CONF" >/dev/null
+        modificar_conf "IgnoreLid" "false" "$UPOWER_CONF"
     fi
-
+    
     sudo systemctl restart upower
-
     echo "Configuración aplicada correctamente."
 }
 
