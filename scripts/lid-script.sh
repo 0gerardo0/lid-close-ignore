@@ -15,8 +15,8 @@ detectar_estado() {
     echo " Estado actual:"
     echo " - HandleLidSwitch: ${HANDLE_LID:-DEFAULT}"
     echo " - HandleLidSwitchDocked: ${HANDLE_LID_DOCKED:-DEFAULT}"
-    echo " - LidSwitchIgnoreInhibited: ${LID_INHIBITED:-DEFAULT}"}
-
+    echo " - LidSwitchIgnoreInhibited: ${LID_INHIBITED:-DEFAULT}"
+}
 modificar_conf() {
     local clave=$1
     local valor=$2
